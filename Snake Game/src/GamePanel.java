@@ -5,13 +5,18 @@ import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener {
 
+    // Define constants for the game
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT)/UNIT_SIZE;
     static final int DELAY = 75;
+
+    // Arrays to store the coordinates of the snake's body parts
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
+
+    // Variables to keep track of the game's state
     int bodyParts = 6;
     int applesEaten;
     int appleX;
@@ -21,7 +26,7 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
 
-
+    // Constructor for the game panel
     GamePanel(){
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -31,6 +36,7 @@ public class GamePanel extends JPanel implements ActionListener {
         startGame();
     }
 
+    // Method to start the game
     public void startGame(){
         newApple();
         running = true;
@@ -38,11 +44,13 @@ public class GamePanel extends JPanel implements ActionListener {
         timer.start();
     }
 
+    // Override the paintComponent method to draw the game
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         draw(g);
     }
 
+    // Method to draw the game
     public void draw(Graphics g) {
 
         if (running) {
@@ -50,33 +58,40 @@ public class GamePanel extends JPanel implements ActionListener {
 //                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
 //                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
 //            }
+            // Draw the apple
             g.setColor(Color.RED);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 
+            // Draw the snake's body parts
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
+                    // Draw the head of the snake
                     g.setColor(Color.GREEN);
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
+                    // Draw the body of the snake
 //                    g.setColor(new Color(45, 180, 0));
                     g.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
+            // Draw the score
             g.setColor(Color.red);
             g.setFont( new Font("Ink Free",Font.BOLD, 40));
             FontMetrics metrics = getFontMetrics(g.getFont());
             g.drawString("Yoyo's Apples: "+applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Yoyo's Apples: "+applesEaten))/2, g.getFont().getSize());
         }
         else
-            gameOver(g);
+            gameOver(g); // Draw the game over message
     }
 
+    // Method to generate a new apple
     public void newApple(){
         appleX = random.nextInt((int) (SCREEN_WIDTH/UNIT_SIZE))*UNIT_SIZE;
         appleY = random.nextInt((int) (SCREEN_HEIGHT/UNIT_SIZE))*UNIT_SIZE;
     }
 
+    // Method to move the snake
     public void move(){
         for (int i = bodyParts; i > 0; i--){
             x[i] = x[i-1];
@@ -97,11 +112,12 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // method to check if the snake has collided with an apple
     public void checkApple(){
         if (x[0] == appleX && y[0] == appleY){
-            bodyParts++;
-            applesEaten++;
-            newApple();
+            bodyParts++; // adds a new body part
+            applesEaten++; // increments the score
+            newApple(); // places the apple in a new position
         }
     }
 
